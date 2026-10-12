@@ -7,4 +7,11 @@ parameters:
         noParameterWithNullDefaultValue:
             enabled: false
 
-rules: []
+rules:
+    - HiddenHint\PhpInspections\PHPStan\Rules\MemoizedPropertyRule
+
+services:
+    -
+        class: HiddenHint\PhpInspections\PHPStan\Rules\TypedClassConstantRule
+        tags:
+            - phpstan.rules.rule

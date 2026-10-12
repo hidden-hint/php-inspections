@@ -13,3 +13,9 @@ parameters:
         - tests/*/Fixture/*
         - tests/*/*/Fixture/*
         - tests/CodingStandard/fixtures/*
+    ergebnis:
+        noExtends:
+            classesAllowedToBeExtended:
+                - PHPStan\Testing\RuleTestCase
+                - Rector\Rector\AbstractRector
+                - Rector\Testing\PHPUnit\AbstractRectorTestCase
