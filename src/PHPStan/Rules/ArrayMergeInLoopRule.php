@@ -6,10 +6,14 @@ namespace HiddenHint\PhpInspections\PHPStan\Rules;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\PropertyFetch;
+use PhpParser\Node\Expr\StaticPropertyFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt;
@@ -21,6 +25,7 @@ use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\While_;
 use PhpParser\NodeFinder;
 use PHPStan\Analyser\Scope;
+use PHPStan\Node\Printer\Printer;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -51,7 +56,10 @@ final class ArrayMergeInLoopRule implements Rule
         Do_::class,
     ];
 
-    public function __construct(private readonly NodeFinder $nodeFinder) {}
+    public function __construct(
+        private readonly NodeFinder $nodeFinder,
+        private readonly Printer $printer,
+    ) {}
 
     public function getNodeType(): string
     {
@@ -105,11 +113,18 @@ final class ArrayMergeInLoopRule implements Rule
 
     private function isAccumulation(Assign $assign): bool
     {
-        return $assign->var instanceof Variable
-            && is_string($assign->var->name)
+        return $this->isAccumulator($assign->var)
             && $assign->expr instanceof FuncCall
             && $this->isArrayMerge($assign->expr)
-            && $this->passesVariable($assign->expr, $assign->var->name);
+            && $this->passesAccumulator($assign->expr, $this->printer->prettyPrintExpr($assign->var));
+    }
+
+    private function isAccumulator(Expr $target): bool
+    {
+        return ($target instanceof Variable && is_string($target->name))
+            || $target instanceof PropertyFetch
+            || $target instanceof StaticPropertyFetch
+            || $target instanceof ArrayDimFetch;
     }
 
     private function isArrayMerge(FuncCall $call): bool
@@ -117,13 +132,12 @@ final class ArrayMergeInLoopRule implements Rule
         return $call->name instanceof Name && self::FUNCTION_NAME === $call->name->toLowerString();
     }
 
-    private function passesVariable(FuncCall $call, string $variableName): bool
+    private function passesAccumulator(FuncCall $call, string $printedAccumulator): bool
     {
         return [] !== array_filter(
             $call->getRawArgs(),
-            static fn(Node $argument): bool => $argument instanceof Arg
-                && $argument->value instanceof Variable
-                && $variableName === $argument->value->name,
+            fn(Node $argument): bool => $argument instanceof Arg
+                && $printedAccumulator === $this->printer->prettyPrintExpr($argument->value),
         );
     }
 

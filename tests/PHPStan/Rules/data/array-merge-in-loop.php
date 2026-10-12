@@ -31,3 +31,22 @@ final class ArrayMergeInLoop
         return $result;
     }
 }
+
+final class PropertyAccumulation
+{
+    private array $items = [];
+
+    private static array $registry = [];
+
+    public function collect(array $chunks, array $groups): void
+    {
+        foreach ($chunks as $chunk) {
+            $this->items = array_merge($this->items, $chunk);
+            self::$registry = array_merge(self::$registry, $chunk);
+            $this->items = array_merge(self::$registry, $chunk);
+        }
+        foreach ($groups as $key => $group) {
+            $groups[$key] = array_merge($groups[$key], $group);
+        }
+    }
+}

@@ -6,6 +6,7 @@ namespace HiddenHint\PhpInspections\Tests\PHPStan\Rules;
 
 use HiddenHint\PhpInspections\PHPStan\Rules\ArrayMergeInLoopRule;
 use PhpParser\NodeFinder;
+use PHPStan\Node\Printer\Printer;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
@@ -22,11 +23,14 @@ final class ArrayMergeInLoopRuleTest extends RuleTestCase
         $this->analyse([__DIR__ . '/data/array-merge-in-loop.php'], [
             [self::MESSAGE, 13],
             [self::MESSAGE, 27],
+            [self::MESSAGE, 44],
+            [self::MESSAGE, 45],
+            [self::MESSAGE, 49],
         ]);
     }
 
     protected function getRule(): Rule
     {
-        return new ArrayMergeInLoopRule(new NodeFinder());
+        return new ArrayMergeInLoopRule(new NodeFinder(), self::getContainer()->getByType(Printer::class));
     }
 }

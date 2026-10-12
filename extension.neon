@@ -83,7 +83,7 @@ services:
     -
         class: HiddenHint\PhpInspections\PHPStan\Rules\ArrayMergeInLoopRule
         arguments:
-            - @phpInspections.nodeFinder
+            nodeFinder: @phpInspections.nodeFinder
         tags:
             - phpstan.rules.rule
     -
