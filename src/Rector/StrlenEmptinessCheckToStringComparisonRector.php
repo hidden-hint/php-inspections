@@ -36,7 +36,8 @@ final class StrlenEmptinessCheckToStringComparisonRector extends AbstractRector
     private function isStringEmptinessCheck(BinaryOp $comparison): bool
     {
         return $this->emptinessComparisonMatcher->matches($comparison, ...self::FUNCTION_NAMES)
-            && $this->getType($this->emptinessComparisonMatcher->match($comparison, ...self::FUNCTION_NAMES)->subject)
+            && $this->nodeTypeResolver
+                ->getNativeType($this->emptinessComparisonMatcher->match($comparison, ...self::FUNCTION_NAMES)->subject)
                 ->isString()
                 ->yes();
     }

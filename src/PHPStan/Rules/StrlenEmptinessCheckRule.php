@@ -53,7 +53,7 @@ final class StrlenEmptinessCheckRule implements Rule
      */
     private function reportStringSubject(EmptinessComparison $comparison, Scope $scope): array
     {
-        if (!$scope->getType($comparison->subject)->isString()->yes()) {
+        if (!$scope->getNativeType($comparison->subject)->isString()->yes()) {
             return [];
         }
 

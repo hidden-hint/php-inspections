@@ -49,7 +49,7 @@ final class CountEmptinessCheckRule implements Rule
      */
     private function reportArraySubject(EmptinessComparison $comparison, Scope $scope): array
     {
-        if (!$scope->getType($comparison->subject)->isArray()->yes()) {
+        if (!$scope->getNativeType($comparison->subject)->isArray()->yes()) {
             return [];
         }
 

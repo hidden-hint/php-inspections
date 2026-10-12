@@ -37,7 +37,8 @@ final class CountEmptinessCheckToArrayComparisonRector extends AbstractRector
     private function isArrayEmptinessCheck(BinaryOp $comparison): bool
     {
         return $this->emptinessComparisonMatcher->matches($comparison, self::FUNCTION_NAME)
-            && $this->getType($this->emptinessComparisonMatcher->match($comparison, self::FUNCTION_NAME)->subject)
+            && $this->nodeTypeResolver
+                ->getNativeType($this->emptinessComparisonMatcher->match($comparison, self::FUNCTION_NAME)->subject)
                 ->isArray()
                 ->yes();
     }

@@ -18,4 +18,12 @@ final class CountEmptiness
             count($items) === 2,
         ];
     }
+
+    /**
+     * @param array<int> $documented
+     */
+    public function checkDocumented($documented): bool
+    {
+        return count($documented) === 0;
+    }
 }

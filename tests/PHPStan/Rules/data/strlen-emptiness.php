@@ -15,4 +15,12 @@ final class StrlenEmptiness
             strlen($number) === 0,
         ];
     }
+
+    /**
+     * @param string $documented
+     */
+    public function checkDocumented($documented): bool
+    {
+        return strlen($documented) === 0;
+    }
 }
