@@ -19,6 +19,8 @@ final class YodaIdenticalComparison
             1 === 2,
             $a === $b,
             $x === -1,
+            $x === +1,
+            $x === $a::class,
         ];
     }
 }

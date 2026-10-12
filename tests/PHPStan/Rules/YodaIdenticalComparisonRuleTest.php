@@ -23,6 +23,7 @@ final class YodaIdenticalComparisonRuleTest extends RuleTestCase
             [self::MESSAGE, 16],
             [self::MESSAGE, 17],
             [self::MESSAGE, 21],
+            [self::MESSAGE, 22],
         ]);
     }
 
