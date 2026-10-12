@@ -13,6 +13,7 @@ expected_identifiers=(
     phpInspections.arrayMergeInLoop
 )
 
+(cd "$sample_project" && composer install --quiet --no-interaction)
 (cd "$sample_project" && "$phpstan_binary" clear-result-cache -c "$config_file" >/dev/null 2>&1) || true
 report="$(cd "$sample_project" && "$phpstan_binary" analyse --error-format=json --no-progress -c "$config_file" 2>/dev/null || true)"
 

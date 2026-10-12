@@ -37,28 +37,23 @@ parameters:
 
 ```sh
 composer global config repositories.php-inspections path ~/Work/hidden-hint/php-inspections
-composer global config allow-plugins.phpstan/extension-installer true
 composer global require hidden-hint/php-inspections:@dev
 
 mkdir -p ~/.config/php-inspections
-cp ~/Work/hidden-hint/php-inspections/docs/global/phpstan.neon ~/.config/php-inspections/phpstan.neon
+sed "s#{composer-home}#$(composer global config home)#g" \
+    ~/Work/hidden-hint/php-inspections/docs/global/phpstan.neon > ~/.config/php-inspections/phpstan.neon
 ```
 
-Check that PHPStan picked up the extensions:
-
-```sh
-~/.composer/vendor/bin/phpstan diagnose -c ~/.config/php-inspections/phpstan.neon
-```
-
-The `Extension installer` section must list `hidden-hint/php-inspections`, `ergebnis/phpstan-rules` and
-`phpstan/phpstan-strict-rules`. If it says `No extensions installed`, regenerate the list with
-`composer global update phpstan/extension-installer`.
+The global config includes strict-rules, ergebnis and this package's `extension.neon` by absolute path.
+`phpstan/extension-installer` is deliberately not installed globally: Composer runs global plugins during every
+`composer install` in any project, and the installer would overwrite the global extension list with that project's.
 
 The analysed project needs its own `vendor/` (run `composer install` there) so PHPStan can discover its classes.
+PHPStan reads the project's `require.php` range, so PHP 8.3-only rules stay silent for projects that allow older PHP.
 
 ## Fixing a project
 
-Rector first, then PHP CS Fixer:
+Rector first, then PHP CS Fixer, from the project root (Rector reads the PHP version from its `composer.json`):
 
 ```sh
 COMPOSER_HOME="$(composer global config home)"
@@ -101,5 +96,5 @@ vendor/bin/php-cs-fixer check
 bin/smoke-test.sh
 ```
 
-`bin/smoke-test.sh` runs the globally installed PHPStan against `tests/smoke/sample-project` and checks that one custom
-rule from each group is reported.
+`bin/smoke-test.sh` installs `tests/smoke/sample-project`, runs the globally installed PHPStan against it and checks that
+one custom rule from each group is reported.
