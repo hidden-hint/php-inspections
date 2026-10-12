@@ -8,7 +8,6 @@ use PhpParser\Node;
 use PhpParser\Node\Const_;
 use PhpParser\Node\Stmt\ClassConst;
 use PHPStan\Analyser\Scope;
-use PHPStan\Php\PhpVersion;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -25,8 +24,6 @@ final class TypedClassConstantRule implements Rule
     private const string MESSAGE = 'Class constant %s must declare a type.';
     private const string IDENTIFIER = 'phpInspections.untypedClassConstant';
 
-    public function __construct(private readonly PhpVersion $phpVersion) {}
-
     public function getNodeType(): string
     {
         return ClassConst::class;
@@ -34,16 +31,16 @@ final class TypedClassConstantRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
-        if ($this->isExempt($node)) {
+        if ($this->isExempt($node, $scope)) {
             return [];
         }
 
         return array_values(array_map($this->buildError(...), $node->consts));
     }
 
-    private function isExempt(ClassConst $classConstant): bool
+    private function isExempt(ClassConst $classConstant, Scope $scope): bool
     {
-        return null !== $classConstant->type || !$this->phpVersion->supportsNativeTypesInClassConstants();
+        return null !== $classConstant->type || !$scope->getPhpVersion()->supportsNativeTypesInClassConstants()->yes();
     }
 
     private function buildError(Const_ $constant): IdentifierRuleError

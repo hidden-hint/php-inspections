@@ -46,14 +46,11 @@ parametersSchema:
 
 rules:
     - HiddenHint\PhpInspections\PHPStan\Rules\MemoizedPropertyRule
+    - HiddenHint\PhpInspections\PHPStan\Rules\TypedClassConstantRule
     - HiddenHint\PhpInspections\PHPStan\Rules\YodaIdenticalComparisonRule
     - HiddenHint\PhpInspections\PHPStan\Rules\CountInForConditionRule
 
 services:
-    -
-        class: HiddenHint\PhpInspections\PHPStan\Rules\TypedClassConstantRule
-        tags:
-            - phpstan.rules.rule
     - HiddenHint\PhpInspections\PHPStan\Rules\InheritedSignatureDetector
     -
         class: HiddenHint\PhpInspections\PHPStan\Rules\BooleanFlagParameterRule
