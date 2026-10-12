@@ -1,4 +1,36 @@
 parameters:
+    phpInspections:
+        abbreviations:
+            - e
+            - ex
+            - f
+            - i
+            - j
+            - k
+            - v
+            - arr
+            - str
+            - obj
+            - cnt
+            - idx
+            - tmp
+            - val
+            - res
+            - req
+            - resp
+            - cb
+            - fn
+            - ctx
+            - cfg
+            - conf
+            - msg
+            - err
+            - num
+            - len
+            - el
+            - elem
+            - buf
+            - ptr
     ergebnis:
         noIsset:
             enabled: false
@@ -7,8 +39,14 @@ parameters:
         noParameterWithNullDefaultValue:
             enabled: false
 
+parametersSchema:
+    phpInspections: structure([
+        abbreviations: listOf(string())
+    ])
+
 rules:
     - HiddenHint\PhpInspections\PHPStan\Rules\MemoizedPropertyRule
+    - HiddenHint\PhpInspections\PHPStan\Rules\YodaIdenticalComparisonRule
 
 services:
     -
@@ -22,5 +60,10 @@ services:
             - phpstan.rules.rule
     -
         class: HiddenHint\PhpInspections\PHPStan\Rules\ParameterDefaultValueRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: HiddenHint\PhpInspections\PHPStan\Rules\AbbreviatedNameRule
+        arguments: %phpInspections.abbreviations%
         tags:
             - phpstan.rules.rule
