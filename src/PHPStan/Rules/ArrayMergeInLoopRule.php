@@ -23,7 +23,6 @@ use PhpParser\Node\Stmt\For_;
 use PhpParser\Node\Stmt\Foreach_;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\While_;
-use PhpParser\NodeFinder;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\Printer\Printer;
 use PHPStan\Rules\IdentifierRuleError;
@@ -33,7 +32,6 @@ use PHPStan\Rules\RuleErrorBuilder;
 use function array_filter;
 use function array_map;
 use function array_values;
-use function in_array;
 use function is_string;
 
 /**
@@ -57,7 +55,7 @@ final class ArrayMergeInLoopRule implements Rule
     ];
 
     public function __construct(
-        private readonly NodeFinder $nodeFinder,
+        private readonly BoundedNodeFinder $boundedNodeFinder,
         private readonly Printer $printer,
     ) {}
 
@@ -83,32 +81,16 @@ final class ArrayMergeInLoopRule implements Rule
 
     /**
      * @param list<Stmt> $body
-     * @return list<Assign>
+     * @return list<Node>
      */
     private function findAccumulations(array $body): array
     {
-        $nestedAccumulations = $this->accumulationsWithin(...$this->nodeFinder->find($body, $this->isBoundary(...)));
-
-        return array_values(array_filter(
-            $this->accumulationsWithin(...$body),
-            static fn(Assign $assign): bool => !in_array($assign, $nestedAccumulations, true),
-        ));
+        return $this->boundedNodeFinder->find($body, $this->isAccumulatingAssignment(...), ...self::BOUNDARIES);
     }
 
-    /**
-     * @return list<Assign>
-     */
-    private function accumulationsWithin(Node ...$nodes): array
+    private function isAccumulatingAssignment(Node $node): bool
     {
-        return array_values(array_filter(
-            $this->nodeFinder->findInstanceOf(array_values($nodes), Assign::class),
-            $this->isAccumulation(...),
-        ));
-    }
-
-    private function isBoundary(Node $node): bool
-    {
-        return [] !== array_filter(self::BOUNDARIES, static fn(string $boundary): bool => $node instanceof $boundary);
+        return $node instanceof Assign && $this->isAccumulation($node);
     }
 
     private function isAccumulation(Assign $assign): bool
@@ -141,11 +123,11 @@ final class ArrayMergeInLoopRule implements Rule
         );
     }
 
-    private function buildError(Assign $assign): IdentifierRuleError
+    private function buildError(Node $accumulation): IdentifierRuleError
     {
         return RuleErrorBuilder::message(self::MESSAGE)
             ->identifier(self::IDENTIFIER)
-            ->line($assign->getStartLine())
+            ->line($accumulation->getStartLine())
             ->build();
     }
 }

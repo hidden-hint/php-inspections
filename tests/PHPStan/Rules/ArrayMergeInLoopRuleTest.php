@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HiddenHint\PhpInspections\Tests\PHPStan\Rules;
 
 use HiddenHint\PhpInspections\PHPStan\Rules\ArrayMergeInLoopRule;
+use HiddenHint\PhpInspections\PHPStan\Rules\BoundedNodeFinder;
 use PhpParser\NodeFinder;
 use PHPStan\Node\Printer\Printer;
 use PHPStan\Rules\Rule;
@@ -31,6 +32,9 @@ final class ArrayMergeInLoopRuleTest extends RuleTestCase
 
     protected function getRule(): Rule
     {
-        return new ArrayMergeInLoopRule(new NodeFinder(), self::getContainer()->getByType(Printer::class));
+        return new ArrayMergeInLoopRule(
+            new BoundedNodeFinder(new NodeFinder()),
+            self::getContainer()->getByType(Printer::class),
+        );
     }
 }

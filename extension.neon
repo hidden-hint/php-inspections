@@ -60,9 +60,14 @@ services:
             - phpstan.rules.rule
     -
         class: HiddenHint\PhpInspections\PHPStan\Rules\AbbreviatedNameRule
-        arguments: %phpInspections.abbreviations%
         tags:
             - phpstan.rules.rule
+    -
+        class: HiddenHint\PhpInspections\PHPStan\Rules\AbbreviatedTopLevelNameRule
+        tags:
+            - phpstan.rules.rule
+    - HiddenHint\PhpInspections\PHPStan\Rules\FirstDeclarationFinder
+    - HiddenHint\PhpInspections\PHPStan\Rules\AbbreviatedNameReporter
     - HiddenHint\PhpInspections\PHPStan\Rules\EmptinessComparisonMatcher
     - HiddenHint\PhpInspections\PHPStan\Rules\YodaComparisonDetector
     -
@@ -81,9 +86,14 @@ services:
         class: PhpParser\NodeFinder
         autowired: false
     -
-        class: HiddenHint\PhpInspections\PHPStan\Rules\ArrayMergeInLoopRule
+        class: HiddenHint\PhpInspections\PHPStan\Rules\BoundedNodeFinder
         arguments:
-            nodeFinder: @phpInspections.nodeFinder
+            - @phpInspections.nodeFinder
+    -
+        class: HiddenHint\PhpInspections\PHPStan\Rules\AbbreviationDenylist
+        arguments: %phpInspections.abbreviations%
+    -
+        class: HiddenHint\PhpInspections\PHPStan\Rules\ArrayMergeInLoopRule
         tags:
             - phpstan.rules.rule
     -
