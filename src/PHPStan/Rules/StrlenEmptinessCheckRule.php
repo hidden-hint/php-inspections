@@ -13,6 +13,9 @@ use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 
+use function array_filter;
+use function array_map;
+use function array_values;
 use function sprintf;
 
 /**
@@ -38,30 +41,21 @@ final class StrlenEmptinessCheckRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
-        if (!$this->emptinessComparisonMatcher->matches($node, ...self::FUNCTION_NAMES)) {
-            return [];
-        }
-
-        return $this->reportStringSubject(
+        return array_map($this->buildError(...), array_values(array_filter(
             $this->emptinessComparisonMatcher->match($node, ...self::FUNCTION_NAMES),
-            $scope,
-        );
+            static fn(EmptinessComparison $comparison): bool => $scope->getNativeType($comparison->subject)
+                ->isString()
+                ->yes(),
+        )));
     }
 
-    /**
-     * @return list<IdentifierRuleError>
-     */
-    private function reportStringSubject(EmptinessComparison $comparison, Scope $scope): array
+    private function buildError(EmptinessComparison $comparison): IdentifierRuleError
     {
-        if (!$scope->getNativeType($comparison->subject)->isString()->yes()) {
-            return [];
-        }
-
-        return [RuleErrorBuilder::message(sprintf(
+        return RuleErrorBuilder::message(sprintf(
             self::MESSAGE,
             $comparison->checksEmpty ? self::EMPTY_OPERATOR : self::NOT_EMPTY_OPERATOR,
             $this->printer->prettyPrintExpr($comparison->subject),
             $comparison->call->name instanceof Name ? $comparison->call->name->toString() : '',
-        ))->identifier(self::IDENTIFIER)->build()];
+        ))->identifier(self::IDENTIFIER)->build();
     }
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace HiddenHint\PhpInspections\PHPStan\Rules;
 
-use LogicException;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\BinaryOp;
 use PhpParser\Node\Expr\BinaryOp\Equal;
@@ -25,8 +24,6 @@ use function in_array;
 
 final class EmptinessComparisonMatcher
 {
-    private const string NO_MATCH_MESSAGE = 'The comparison is not an emptiness check; call matches() first.';
-
     private const array CALL_ON_LEFT_FORMS = [
         Identical::class => ['literal' => 0, 'checksEmpty' => true],
         Equal::class => ['literal' => 0, 'checksEmpty' => true],
@@ -49,20 +46,10 @@ final class EmptinessComparisonMatcher
         SmallerOrEqual::class => GreaterOrEqual::class,
     ];
 
-    public function matches(BinaryOp $comparison, string ...$functionNames): bool
-    {
-        return [] !== $this->findMatches($comparison, ...$functionNames);
-    }
-
-    public function match(BinaryOp $comparison, string ...$functionNames): EmptinessComparison
-    {
-        return $this->findMatches($comparison, ...$functionNames)[0] ?? throw new LogicException(self::NO_MATCH_MESSAGE);
-    }
-
     /**
      * @return list<EmptinessComparison>
      */
-    private function findMatches(BinaryOp $comparison, string ...$functionNames): array
+    public function match(BinaryOp $comparison, string ...$functionNames): array
     {
         return array_merge(
             $this->matchOriented($comparison->left, $comparison->right, $comparison::class, ...$functionNames),

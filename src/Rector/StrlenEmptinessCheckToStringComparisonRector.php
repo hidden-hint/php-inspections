@@ -13,6 +13,10 @@ use PhpParser\Node\Expr\BinaryOp\NotIdentical;
 use PhpParser\Node\Scalar\String_;
 use Rector\Rector\AbstractRector;
 
+use function array_filter;
+use function array_map;
+use function array_values;
+
 final class StrlenEmptinessCheckToStringComparisonRector extends AbstractRector
 {
     private const array FUNCTION_NAMES = ['strlen', 'mb_strlen'];
@@ -26,20 +30,19 @@ final class StrlenEmptinessCheckToStringComparisonRector extends AbstractRector
 
     public function refactor(Node $node): ?Node
     {
-        if (!$node instanceof BinaryOp || !$this->isStringEmptinessCheck($node)) {
+        if (!$node instanceof BinaryOp) {
             return null;
         }
 
-        return $this->toStringComparison($this->emptinessComparisonMatcher->match($node, ...self::FUNCTION_NAMES));
+        return array_map($this->toStringComparison(...), array_values(array_filter(
+            $this->emptinessComparisonMatcher->match($node, ...self::FUNCTION_NAMES),
+            $this->hasStringSubject(...),
+        )))[0] ?? null;
     }
 
-    private function isStringEmptinessCheck(BinaryOp $comparison): bool
+    private function hasStringSubject(EmptinessComparison $comparison): bool
     {
-        return $this->emptinessComparisonMatcher->matches($comparison, ...self::FUNCTION_NAMES)
-            && $this->nodeTypeResolver
-                ->getNativeType($this->emptinessComparisonMatcher->match($comparison, ...self::FUNCTION_NAMES)->subject)
-                ->isString()
-                ->yes();
+        return $this->nodeTypeResolver->getNativeType($comparison->subject)->isString()->yes();
     }
 
     private function toStringComparison(EmptinessComparison $comparison): Identical|NotIdentical

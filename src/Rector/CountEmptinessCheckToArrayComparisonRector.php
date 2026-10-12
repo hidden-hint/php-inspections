@@ -13,6 +13,10 @@ use PhpParser\Node\Expr\BinaryOp\Identical;
 use PhpParser\Node\Expr\BinaryOp\NotIdentical;
 use Rector\Rector\AbstractRector;
 
+use function array_filter;
+use function array_map;
+use function array_values;
+
 final class CountEmptinessCheckToArrayComparisonRector extends AbstractRector
 {
     private const string FUNCTION_NAME = 'count';
@@ -27,20 +31,19 @@ final class CountEmptinessCheckToArrayComparisonRector extends AbstractRector
 
     public function refactor(Node $node): ?Node
     {
-        if (!$node instanceof BinaryOp || !$this->isArrayEmptinessCheck($node)) {
+        if (!$node instanceof BinaryOp) {
             return null;
         }
 
-        return $this->toArrayComparison($this->emptinessComparisonMatcher->match($node, self::FUNCTION_NAME));
+        return array_map($this->toArrayComparison(...), array_values(array_filter(
+            $this->emptinessComparisonMatcher->match($node, self::FUNCTION_NAME),
+            $this->hasArraySubject(...),
+        )))[0] ?? null;
     }
 
-    private function isArrayEmptinessCheck(BinaryOp $comparison): bool
+    private function hasArraySubject(EmptinessComparison $comparison): bool
     {
-        return $this->emptinessComparisonMatcher->matches($comparison, self::FUNCTION_NAME)
-            && $this->nodeTypeResolver
-                ->getNativeType($this->emptinessComparisonMatcher->match($comparison, self::FUNCTION_NAME)->subject)
-                ->isArray()
-                ->yes();
+        return $this->nodeTypeResolver->getNativeType($comparison->subject)->isArray()->yes();
     }
 
     private function toArrayComparison(EmptinessComparison $comparison): Identical|NotIdentical

@@ -12,6 +12,9 @@ use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 
+use function array_filter;
+use function array_map;
+use function array_values;
 use function sprintf;
 
 /**
@@ -37,26 +40,20 @@ final class CountEmptinessCheckRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
-        if (!$this->emptinessComparisonMatcher->matches($node, self::FUNCTION_NAME)) {
-            return [];
-        }
-
-        return $this->reportArraySubject($this->emptinessComparisonMatcher->match($node, self::FUNCTION_NAME), $scope);
+        return array_map($this->buildError(...), array_values(array_filter(
+            $this->emptinessComparisonMatcher->match($node, self::FUNCTION_NAME),
+            static fn(EmptinessComparison $comparison): bool => $scope->getNativeType($comparison->subject)
+                ->isArray()
+                ->yes(),
+        )));
     }
 
-    /**
-     * @return list<IdentifierRuleError>
-     */
-    private function reportArraySubject(EmptinessComparison $comparison, Scope $scope): array
+    private function buildError(EmptinessComparison $comparison): IdentifierRuleError
     {
-        if (!$scope->getNativeType($comparison->subject)->isArray()->yes()) {
-            return [];
-        }
-
-        return [RuleErrorBuilder::message(sprintf(
+        return RuleErrorBuilder::message(sprintf(
             self::MESSAGE,
             $comparison->checksEmpty ? self::EMPTY_OPERATOR : self::NOT_EMPTY_OPERATOR,
             $this->printer->prettyPrintExpr($comparison->subject),
-        ))->identifier(self::IDENTIFIER)->build()];
+        ))->identifier(self::IDENTIFIER)->build();
     }
 }
