@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HiddenHint\PhpInspections\Tests\PHPStan\Rules;
 
 use HiddenHint\PhpInspections\PHPStan\Rules\CountInForConditionRule;
+use PhpParser\NodeFinder;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
@@ -23,6 +24,6 @@ final class CountInForConditionRuleTest extends RuleTestCase
 
     protected function getRule(): Rule
     {
-        return new CountInForConditionRule();
+        return new CountInForConditionRule(new NodeFinder());
     }
 }

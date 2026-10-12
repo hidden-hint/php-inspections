@@ -29,6 +29,8 @@ final class CountInForConditionRule implements Rule
     private const string MESSAGE = 'Move %s() out of the for loop condition; it is re-evaluated on every iteration.';
     private const string IDENTIFIER = 'phpInspections.callInForCondition';
 
+    public function __construct(private readonly NodeFinder $nodeFinder) {}
+
     public function getNodeType(): string
     {
         return For_::class;
@@ -45,7 +47,7 @@ final class CountInForConditionRule implements Rule
     private function findMeasuringCalls(For_ $loop): array
     {
         return array_values(array_filter(
-            (new NodeFinder())->findInstanceOf($loop->cond, FuncCall::class),
+            $this->nodeFinder->findInstanceOf($loop->cond, FuncCall::class),
             $this->isMeasuringCall(...),
         ));
     }

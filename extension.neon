@@ -47,7 +47,6 @@ parametersSchema:
 rules:
     - HiddenHint\PhpInspections\PHPStan\Rules\MemoizedPropertyRule
     - HiddenHint\PhpInspections\PHPStan\Rules\TypedClassConstantRule
-    - HiddenHint\PhpInspections\PHPStan\Rules\CountInForConditionRule
 
 services:
     - HiddenHint\PhpInspections\PHPStan\Rules\InheritedSignatureDetector
@@ -83,6 +82,12 @@ services:
         autowired: false
     -
         class: HiddenHint\PhpInspections\PHPStan\Rules\ArrayMergeInLoopRule
+        arguments:
+            - @phpInspections.nodeFinder
+        tags:
+            - phpstan.rules.rule
+    -
+        class: HiddenHint\PhpInspections\PHPStan\Rules\CountInForConditionRule
         arguments:
             - @phpInspections.nodeFinder
         tags:
