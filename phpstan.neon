@@ -13,6 +13,11 @@ parameters:
         - tests/*/Fixture/*
         - tests/*/*/Fixture/*
         - tests/CodingStandard/fixtures/*
+        - tests/Rector/SharedConfig/fixtures/*
+    ignoreErrors:
+        -
+            identifier: ergebnis.noNullableReturnTypeDeclaration
+            path: src/Rector/*
     ergebnis:
         noExtends:
             classesAllowedToBeExtended:
