@@ -1,0 +1,42 @@
+{
+    "name": "hiddenhint/php-inspections",
+    "description": "Php Inspections (EA Extended)-style inspections for PHPStan, Rector and PHP CS Fixer",
+    "type": "phpstan-extension",
+    "license": "proprietary",
+    "require": {
+        "php": ">=8.3",
+        "ergebnis/phpstan-rules": "^2.0",
+        "friendsofphp/php-cs-fixer": "^3.64",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-strict-rules": "^2.0",
+        "rector/rector": "^2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0",
+        "symfony/process": "^6.4 || ^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "HiddenHint\\PhpInspections\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HiddenHint\\PhpInspections\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "phpstan": {
+            "includes": [
+                "extension.neon"
+            ]
+        }
+    }
+}

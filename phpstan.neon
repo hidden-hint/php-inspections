@@ -1,0 +1,15 @@
+includes:
+    - extension.neon
+
+parameters:
+    level: max
+    paths:
+        - src
+        - tests
+    excludePaths:
+        - tests/*/data/*
+        - tests/*/*/data/*
+        - tests/*/*/*/data/*
+        - tests/*/Fixture/*
+        - tests/*/*/Fixture/*
+        - tests/CodingStandard/fixtures/*
