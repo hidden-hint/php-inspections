@@ -20,6 +20,7 @@ final class BooleanFlagParameterRuleTest extends RuleTestCase
             ['Parameter $enabled is a boolean flag; split the method into two named methods.', 9],
             ['Parameter $force is a boolean flag; split the method into two named methods.', 12],
             ['Parameter $strict is a boolean flag; split the method into two named methods.', 18],
+            ['Parameter $short is a boolean flag; split the method into two named methods.', 44],
         ]);
     }
 

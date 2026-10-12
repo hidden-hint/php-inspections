@@ -24,3 +24,25 @@ final class BooleanFlagParameter implements Toggle
         return static fn(bool $value): bool => $value;
     }
 }
+
+trait Configurable
+{
+    abstract public function configure(bool $verbose): void;
+
+    public function describe(bool $short): string
+    {
+        return '';
+    }
+}
+
+final class UsesConfigurable
+{
+    use Configurable;
+
+    public function configure(bool $verbose): void {}
+
+    public function describe(bool $short): string
+    {
+        return 'overridden';
+    }
+}
