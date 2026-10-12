@@ -1,3 +1,5 @@
 /vendor/
 .phpunit.cache
 .php-cs-fixer.cache
+/tests/smoke/sample-project/vendor/
+/tests/smoke/sample-project/composer.lock

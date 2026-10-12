@@ -8,6 +8,6 @@ return (require __DIR__ . '/config/php-cs-fixer.php')
     ->setFinder(
         (new Finder())
             ->in([__DIR__ . '/config', __DIR__ . '/src', __DIR__ . '/tests'])
-            ->exclude(['CodingStandard/fixtures', 'Rector/SharedConfig/fixtures'])
+            ->exclude(['CodingStandard/fixtures', 'Rector/SharedConfig/fixtures', 'smoke'])
             ->notPath(['#/data/#', '#/Fixture/#']),
     );

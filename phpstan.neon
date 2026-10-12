@@ -14,6 +14,7 @@ parameters:
         - tests/*/*/Fixture/*
         - tests/CodingStandard/fixtures/*
         - tests/Rector/SharedConfig/fixtures/*
+        - tests/smoke/*
     ignoreErrors:
         -
             identifier: ergebnis.noNullableReturnTypeDeclaration
