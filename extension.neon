@@ -67,3 +67,12 @@ services:
         arguments: %phpInspections.abbreviations%
         tags:
             - phpstan.rules.rule
+    - HiddenHint\PhpInspections\PHPStan\Rules\EmptinessComparisonMatcher
+    -
+        class: HiddenHint\PhpInspections\PHPStan\Rules\CountEmptinessCheckRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: HiddenHint\PhpInspections\PHPStan\Rules\StrlenEmptinessCheckRule
+        tags:
+            - phpstan.rules.rule
