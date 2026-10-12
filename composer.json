@@ -1,5 +1,5 @@
 {
-    "name": "hiddenhint/php-inspections",
+    "name": "hidden-hint/php-inspections",
     "description": "Php Inspections (EA Extended)-style inspections for PHPStan, Rector and PHP CS Fixer",
     "type": "phpstan-extension",
     "license": "proprietary",

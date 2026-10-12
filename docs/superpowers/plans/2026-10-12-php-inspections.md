@@ -4,7 +4,7 @@
 
 **Goal:** Bring Php Inspections (EA Extended)-style inspections into VS Code as editor diagnostics, with automated replacements and formatting, installed once system-wide.
 
-**Architecture:** One Composer package `hiddenhint/php-inspections` ships three things: a PHPStan extension (detection → VS Code highlighting via the PHPStan extension), Rector rules plus a Rector config (replacements), and a shared PHP CS Fixer ruleset (formatting/style). Existing rule packs cover what they can; custom rules fill only the gaps. Installed with `composer global require`; VS Code points at the global binaries and configs.
+**Architecture:** One Composer package `hidden-hint/php-inspections` ships three things: a PHPStan extension (detection → VS Code highlighting via the PHPStan extension), Rector rules plus a Rector config (replacements), and a shared PHP CS Fixer ruleset (formatting/style). Existing rule packs cover what they can; custom rules fill only the gaps. Installed with `composer global require`; VS Code points at the global binaries and configs.
 
 **Tech Stack:** PHP 8.3, PHPStan ^2.1, Rector ^2.0, PHP CS Fixer ^3.64, PHPUnit ^11, phpstan/phpstan-strict-rules, ergebnis/phpstan-rules, phpstan/extension-installer.
 
@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- Package name `hiddenhint/php-inspections`, root namespace `HiddenHint\PhpInspections\`, PSR-4 from `src/`, tests `HiddenHint\PhpInspections\Tests\` from `tests/`.
+- Package name `hidden-hint/php-inspections`, root namespace `HiddenHint\PhpInspections\`, PSR-4 from `src/`, tests `HiddenHint\PhpInspections\Tests\` from `tests/`.
 - PHP `>=8.3` for the package itself; rules must not report things the analysed project's PHP version cannot express (use `PHPStan\Php\PhpVersion`).
 - Package code follows `~/.claude/CLAUDE.md` PHP rules: `declare(strict_types=1)`, `final` classes, no comments, typed constants, static closures, no `empty()`, Yoda for `===`, blank line before `return`, full names, imports instead of FQCNs, trailing newline.
 - Inheritance only where the framework mandates it (`RuleTestCase`, `AbstractRector`, `AbstractRectorTestCase`); those classes are still `final`.
@@ -188,7 +188,7 @@ public function testReportsUntypedConstants(): void
 
 **Interfaces:**
 - Consumes: everything above.
-- Produces: documented commands — `composer global config repositories.php-inspections path ~/Work/hidden-hint/php-inspections`, `composer global require hiddenhint/php-inspections:@dev`, then `rector process <path> --config ~/.composer/.../config/rector.php` followed by `php-cs-fixer fix <path> --config ~/.composer/.../config/php-cs-fixer.php` (resolve the home with `composer global config home`).
+- Produces: documented commands — `composer global config repositories.php-inspections path ~/Work/hidden-hint/php-inspections`, `composer global require hidden-hint/php-inspections:@dev`, then `rector process <path> --config ~/.composer/.../config/rector.php` followed by `php-cs-fixer fix <path> --config ~/.composer/.../config/php-cs-fixer.php` (resolve the home with `composer global config home`).
 - Produces: VS Code user settings for the PHPStan extension (SanderRonde `phpstan-vscode`: binary path → global `phpstan`, config file → `~/.config/php-inspections/phpstan.neon`) and the PHP CS Fixer extension (executable + config path, format on save). Verify setting keys against each extension's README at implementation time.
 
 - [ ] **Step 1: Write the failing smoke test** `bin/smoke-test.sh`: runs the global `phpstan analyse --error-format=json -c ~/.config/php-inspections/phpstan.neon` inside `tests/smoke/sample-project` and asserts (with `jq`) that identifiers `phpInspections.untypedClassConstant`, `phpInspections.booleanFlagParameter`, `phpInspections.abbreviatedName`, `phpInspections.countEmptinessCheck`, `phpInspections.arrayMergeInLoop` are all present.
