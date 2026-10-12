@@ -8,4 +8,14 @@ final class Sample
     {
         return '' === $name;
     }
+
+    public function hasNoItems(array $items): bool
+    {
+        return [] === $items;
+    }
+
+    public function isMissing(?string $name): bool
+    {
+        return null === $name;
+    }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HiddenHint\PhpInspections\Tests\PHPStan\Rules;
 
+use HiddenHint\PhpInspections\PHPStan\Rules\YodaComparisonDetector;
 use HiddenHint\PhpInspections\PHPStan\Rules\YodaIdenticalComparisonRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
@@ -27,6 +28,6 @@ final class YodaIdenticalComparisonRuleTest extends RuleTestCase
 
     protected function getRule(): Rule
     {
-        return new YodaIdenticalComparisonRule();
+        return new YodaIdenticalComparisonRule(new YodaComparisonDetector());
     }
 }

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use HiddenHint\PhpInspections\Rector\CountEmptinessCheckToArrayComparisonRector;
+use HiddenHint\PhpInspections\Rector\IdenticalToYodaRector;
 use HiddenHint\PhpInspections\Rector\StrlenEmptinessCheckToStringComparisonRector;
 use Rector\CodeQuality\Rector\Identical\StrlenZeroToIdenticalEmptyStringRector;
 use Rector\Config\RectorConfig;
@@ -14,5 +15,6 @@ return RectorConfig::configure()
     ->withRules([
         CountEmptinessCheckToArrayComparisonRector::class,
         StrlenEmptinessCheckToStringComparisonRector::class,
+        IdenticalToYodaRector::class,
     ])
     ->withSkip([StrlenZeroToIdenticalEmptyStringRector::class]);

@@ -47,7 +47,6 @@ parametersSchema:
 rules:
     - HiddenHint\PhpInspections\PHPStan\Rules\MemoizedPropertyRule
     - HiddenHint\PhpInspections\PHPStan\Rules\TypedClassConstantRule
-    - HiddenHint\PhpInspections\PHPStan\Rules\YodaIdenticalComparisonRule
     - HiddenHint\PhpInspections\PHPStan\Rules\CountInForConditionRule
 
 services:
@@ -66,6 +65,11 @@ services:
         tags:
             - phpstan.rules.rule
     - HiddenHint\PhpInspections\PHPStan\Rules\EmptinessComparisonMatcher
+    - HiddenHint\PhpInspections\PHPStan\Rules\YodaComparisonDetector
+    -
+        class: HiddenHint\PhpInspections\PHPStan\Rules\YodaIdenticalComparisonRule
+        tags:
+            - phpstan.rules.rule
     -
         class: HiddenHint\PhpInspections\PHPStan\Rules\CountEmptinessCheckRule
         tags:
