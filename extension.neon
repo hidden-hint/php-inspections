@@ -47,6 +47,7 @@ parametersSchema:
 rules:
     - HiddenHint\PhpInspections\PHPStan\Rules\MemoizedPropertyRule
     - HiddenHint\PhpInspections\PHPStan\Rules\YodaIdenticalComparisonRule
+    - HiddenHint\PhpInspections\PHPStan\Rules\CountInForConditionRule
 
 services:
     -
@@ -74,5 +75,14 @@ services:
             - phpstan.rules.rule
     -
         class: HiddenHint\PhpInspections\PHPStan\Rules\StrlenEmptinessCheckRule
+        tags:
+            - phpstan.rules.rule
+    phpInspections.nodeFinder:
+        class: PhpParser\NodeFinder
+        autowired: false
+    -
+        class: HiddenHint\PhpInspections\PHPStan\Rules\ArrayMergeInLoopRule
+        arguments:
+            - @phpInspections.nodeFinder
         tags:
             - phpstan.rules.rule
