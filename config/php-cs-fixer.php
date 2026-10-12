@@ -26,8 +26,8 @@ return (new Config())
         'no_useless_else' => true,
         'single_blank_line_at_eof' => true,
         'yoda_style' => [
-            'equal' => false,
-            'identical' => false,
-            'less_and_greater' => false,
+            'equal' => null,
+            'identical' => null,
+            'less_and_greater' => null,
         ],
     ]);

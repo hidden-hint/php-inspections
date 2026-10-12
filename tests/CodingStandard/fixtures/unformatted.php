@@ -6,6 +6,9 @@ class Sample
 {
     public function run(array $items): int
     {
+        if ([] === $items) {
+            return 0;
+        }
         $filter = function (int $item) {
             return $item == 1;
         };

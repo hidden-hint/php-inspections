@@ -10,6 +10,9 @@ final class Sample
 {
     public function run(array $items): int
     {
+        if ([] === $items) {
+            return 0;
+        }
         $filter = static function (int $item) {
             return $item === 1;
         };
