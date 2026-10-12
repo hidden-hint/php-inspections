@@ -1,1 +1,10 @@
+parameters:
+    ergebnis:
+        noIsset:
+            enabled: false
+        noConstructorParameterWithDefaultValue:
+            enabled: false
+        noParameterWithNullDefaultValue:
+            enabled: false
+
 rules: []
