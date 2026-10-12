@@ -15,3 +15,12 @@ services:
         class: HiddenHint\PhpInspections\PHPStan\Rules\TypedClassConstantRule
         tags:
             - phpstan.rules.rule
+    - HiddenHint\PhpInspections\PHPStan\Rules\InheritedSignatureDetector
+    -
+        class: HiddenHint\PhpInspections\PHPStan\Rules\BooleanFlagParameterRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: HiddenHint\PhpInspections\PHPStan\Rules\ParameterDefaultValueRule
+        tags:
+            - phpstan.rules.rule
