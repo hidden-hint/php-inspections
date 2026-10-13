@@ -6,12 +6,13 @@ Php Inspections (EA Extended)-style inspections for VS Code, built from three to
 |---|---|---|
 | Detection (editor diagnostics) | PHPStan | `extension.neon` (custom rules + strict-rules + ergebnis) |
 | Replacements | Rector | `config/rector.php` |
-| Formatting (on save) | PHP CS Fixer | `config/php-cs-fixer.php` |
+| Formatting (Format Document) | PHP CS Fixer | `config/php-cs-fixer.php` |
 | Style refactorings (manual) | PHP CS Fixer | `config/php-cs-fixer-refactor.php` |
 
 See [docs/coverage.md](docs/coverage.md) for which EA inspection is covered by which tool.
 
-`config/php-cs-fixer.php` only changes layout (`@PER-CS`, blank lines), so it is safe to run on every save.
+`config/php-cs-fixer.php` only changes layout (`@PER-CS`, blank lines) and runs only when you format a document. It
+deviates from `@PER-CS` by allowing a file docblock directly after `<?php`.
 Everything that rewrites code (`==` to `===`, `declare(strict_types=1)`, `final`, `static` closures, strict
 `in_array`, imports, removing `else`) lives in `config/php-cs-fixer-refactor.php` and only runs when invoked by hand.
 
@@ -122,15 +123,15 @@ User `settings.json` (replace `/Users/you` with your home directory):
     "php-cs-fixer.config": "/Users/you/.composer/vendor/hidden-hint/php-inspections/config/php-cs-fixer.php",
     "php-cs-fixer.allowRisky": false,
     "php-cs-fixer.exclude": ["**/*.phtml"],
-    "php-cs-fixer.onsave": true
+    "php-cs-fixer.onsave": false
 }
 ```
 
 `php-cs-fixer.exclude` keeps the fixer away from templates: PHP CS Fixer indents PHP blocks without seeing the
 surrounding HTML, so it breaks the indentation of mixed HTML/PHP files.
 
-`php-cs-fixer.onsave` also fires on auto-save, so with `files.autoSave: afterDelay` the fixer runs after every pause in
-typing.
+With `php-cs-fixer.onsave` off, files are only formatted on command (**Format Document**, `⇧⌥F`). Turning it on would
+also format on every auto-save.
 
 ## Development
 

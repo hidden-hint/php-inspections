@@ -10,6 +10,7 @@ return (new Config())
     ->setRiskyAllowed(true)
     ->setRules([
         ...$formatConfig->getRules(),
+        'blank_line_after_opening_tag' => true,
         'declare_strict_types' => true,
         'final_class' => true,
         'static_lambda' => true,

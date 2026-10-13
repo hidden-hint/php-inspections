@@ -19,6 +19,8 @@ final class RulesetTest extends TestCase
 
     private const string TEMPLATE_NAME = 'template.phtml';
 
+    private const string FILE_DOCBLOCK_NAME = 'file-docblock.php';
+
     private const string FORMAT_CONFIG = 'php-cs-fixer.php';
 
     private const string REFACTOR_CONFIG = 'php-cs-fixer-refactor.php';
@@ -48,6 +50,15 @@ final class RulesetTest extends TestCase
         $this->runFixer(self::FORMAT_CONFIG, $templatePath);
 
         self::assertFileEquals(__DIR__ . '/fixtures/' . self::TEMPLATE_NAME, $templatePath);
+    }
+
+    public function testKeepsFileDocBlockDirectlyAfterOpeningTag(): void
+    {
+        $fixturePath = $this->copyFixture(self::FILE_DOCBLOCK_NAME);
+
+        $this->runFixer(self::FORMAT_CONFIG, $fixturePath);
+
+        self::assertFileEquals(__DIR__ . '/fixtures/' . self::FILE_DOCBLOCK_NAME, $fixturePath);
     }
 
     private function copyFixture(string $fixtureName): string

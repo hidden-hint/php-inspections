@@ -2,7 +2,7 @@
 
 Rows follow the inspection groups documented in
 [kalessil/phpinspectionsea `docs/`](https://github.com/kalessil/phpinspectionsea/tree/master/docs),
-one row per documented inspection, grouped by the document it appears in. "PHP CS Fixer" means the on-save
+one row per documented inspection, grouped by the document it appears in. "PHP CS Fixer" means the Format Document
 `config/php-cs-fixer.php`; "PHP CS Fixer (refactor)" means the manually run `config/php-cs-fixer-refactor.php`.
 
 | EA inspection | Covered by | Rule/fixer id |
