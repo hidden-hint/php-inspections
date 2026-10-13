@@ -65,7 +65,8 @@ PHPStan runs from the project root (VS Code uses the workspace folder), so `getc
 default it analyses the whole project except `vendor/`.
 
 To handle a kind of project differently, detect it by a file it always has and return its own parameters. For a
-Magento 1 shop whose own modules live in `app/code/YourVendor`:
+legacy application without Composer autoloading, whose own code lives in `app/modules/YourVendor` and whose framework
+lives in `app/modules` and `lib`:
 
 ```php
 <?php
@@ -74,11 +75,11 @@ declare(strict_types=1);
 
 $root = getcwd();
 
-return is_file($root . '/app/Mage.php')
+return is_file($root . '/app/bootstrap.php')
     ? ['parameters' => [
-        'paths' => [$root . '/app/code/YourVendor'],
-        'scanFiles' => [$root . '/app/Mage.php'],
-        'scanDirectories' => [$root . '/app/code', $root . '/lib'],
+        'paths' => [$root . '/app/modules/YourVendor'],
+        'scanFiles' => [$root . '/app/bootstrap.php'],
+        'scanDirectories' => [$root . '/app/modules', $root . '/lib'],
         'ignoreErrors' => [['identifier' => 'ergebnis.noExtends']],
     ]]
     : ['parameters' => [
@@ -89,13 +90,13 @@ return is_file($root . '/app/Mage.php')
 
 - Keep `paths` out of `phpstan.neon`: PHPStan merges list parameters from included files, so a `paths` there would
   be added to the project's instead of replaced.
-- `scanDirectories` lets PHPStan find classes outside `paths` without reporting on them. Prefer it over
-  `bootstrapFiles` with the project's own autoloader: Magento 1's `app/Mage.php` registers an autoloader that
-  declares classes PHPStan has already loaded and crashes the analysis.
-- `app/Mage.php` sits outside `app/code` and `lib`, so it needs its own `scanFiles` entry. If anything in `paths`
-  declares a stub `Mage` class (test bootstraps often do), exclude it: PHPStan would otherwise resolve `Mage` to the
-  stub and report `Mage::getModel()` and friends as undefined.
-- Magento 1 requires inheritance, so `ergebnis.noExtends` would fire on every class.
+- `scanDirectories` and `scanFiles` let PHPStan find classes outside `paths` without reporting on them. Every file
+  that declares a class the code uses must be covered, including ones next to the scanned directories. Prefer them
+  over `bootstrapFiles` with the project's own autoloader: a legacy autoloader can declare classes PHPStan has already
+  loaded and crash the analysis.
+- If anything in `paths` declares a stub of a framework class (test bootstraps often do), exclude it. PHPStan would
+  otherwise resolve the class to the stub and report the real methods as undefined.
+- Frameworks built on inheritance make `ergebnis.noExtends` fire on every class; ignore it there.
 - Code whose dependencies are not installed in `vendor/` cannot be analysed: leave it out of `paths`.
 
 ## Fixing a project
