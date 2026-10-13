@@ -6,9 +6,14 @@ Php Inspections (EA Extended)-style inspections for VS Code, built from three to
 |---|---|---|
 | Detection (editor diagnostics) | PHPStan | `extension.neon` (custom rules + strict-rules + ergebnis) |
 | Replacements | Rector | `config/rector.php` |
-| Formatting and style | PHP CS Fixer | `config/php-cs-fixer.php` |
+| Formatting (on save) | PHP CS Fixer | `config/php-cs-fixer.php` |
+| Style refactorings (manual) | PHP CS Fixer | `config/php-cs-fixer-refactor.php` |
 
 See [docs/coverage.md](docs/coverage.md) for which EA inspection is covered by which tool.
+
+`config/php-cs-fixer.php` only changes layout (`@PER-CS`, blank lines), so it is safe to run on every save.
+Everything that rewrites code (`==` to `===`, `declare(strict_types=1)`, `final`, `static` closures, strict
+`in_array`, imports, removing `else`) lives in `config/php-cs-fixer-refactor.php` and only runs when invoked by hand.
 
 ## Custom PHPStan rules
 
@@ -58,7 +63,7 @@ Rector first, then PHP CS Fixer, from the project root (Rector reads the PHP ver
 ```sh
 COMPOSER_HOME="$(composer global config home)"
 rector process <path> --config "$COMPOSER_HOME/vendor/hidden-hint/php-inspections/config/rector.php"
-php-cs-fixer fix <path> --config "$COMPOSER_HOME/vendor/hidden-hint/php-inspections/config/php-cs-fixer.php"
+php-cs-fixer fix <path> --config "$COMPOSER_HOME/vendor/hidden-hint/php-inspections/config/php-cs-fixer-refactor.php"
 ```
 
 ## VS Code
@@ -78,7 +83,7 @@ User `settings.json` (replace `/Users/you` with your home directory):
     "phpstan.configFile": "/Users/you/.config/php-inspections/phpstan.neon",
     "php-cs-fixer.executablePath": "/Users/you/.composer/vendor/bin/php-cs-fixer",
     "php-cs-fixer.config": "/Users/you/.composer/vendor/hidden-hint/php-inspections/config/php-cs-fixer.php",
-    "php-cs-fixer.allowRisky": true,
+    "php-cs-fixer.allowRisky": false,
     "php-cs-fixer.onsave": true
 }
 ```

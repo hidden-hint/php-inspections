@@ -1,0 +1,9 @@
+<?php /** @var Mage_Catalog_Block_Product_View_Media $this */ ?>
+<?php $_product = $this->getProduct() ?>
+<?php if ($this->isEnabled()): ?>
+    <ul><?php foreach ($this->getImages() as $_image): ?>
+        <li><?php echo $this->escapeHtml($_image->getLabel()) ?></li>
+    <?php endforeach; ?></ul>
+<?php else: //Module disabled. Show images in Magento default style ?>
+    <p><?= $this->__('Default') ?></p>
+<?php endif ?>

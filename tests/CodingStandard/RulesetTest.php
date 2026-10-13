@@ -17,14 +17,45 @@ final class RulesetTest extends TestCase
 {
     private const string FIXTURE_NAME = 'unformatted.php';
 
-    public function testFormatsFixtureToExpectedOutput(): void
+    private const string TEMPLATE_NAME = 'template.phtml';
+
+    private const string FORMAT_CONFIG = 'php-cs-fixer.php';
+
+    private const string REFACTOR_CONFIG = 'php-cs-fixer-refactor.php';
+
+    public function testFormatConfigOnlyChangesLayout(): void
     {
-        $workingDirectory = $this->createWorkingDirectory();
-        copy(__DIR__ . '/fixtures/' . self::FIXTURE_NAME, $workingDirectory . '/' . self::FIXTURE_NAME);
+        $fixturePath = $this->copyFixture(self::FIXTURE_NAME);
 
-        $this->runFixer($workingDirectory);
+        $this->runFixer(self::FORMAT_CONFIG, $fixturePath);
 
-        self::assertFileEquals(__DIR__ . '/fixtures/formatted.php', $workingDirectory . '/' . self::FIXTURE_NAME);
+        self::assertFileEquals(__DIR__ . '/fixtures/formatted.php', $fixturePath);
+    }
+
+    public function testRefactorConfigAppliesRiskyRules(): void
+    {
+        $fixturePath = $this->copyFixture(self::FIXTURE_NAME);
+
+        $this->runFixer(self::REFACTOR_CONFIG, $fixturePath);
+
+        self::assertFileEquals(__DIR__ . '/fixtures/refactored.php', $fixturePath);
+    }
+
+    public function testKeepsSpaceBeforeClosingTagAfterSingleLineComment(): void
+    {
+        $templatePath = $this->copyFixture(self::TEMPLATE_NAME);
+
+        $this->runFixer(self::FORMAT_CONFIG, $templatePath);
+
+        self::assertFileEquals(__DIR__ . '/fixtures/' . self::TEMPLATE_NAME, $templatePath);
+    }
+
+    private function copyFixture(string $fixtureName): string
+    {
+        $fixturePath = $this->createWorkingDirectory() . '/' . $fixtureName;
+        copy(__DIR__ . '/fixtures/' . $fixtureName, $fixturePath);
+
+        return $fixturePath;
     }
 
     private function createWorkingDirectory(): string
@@ -35,15 +66,15 @@ final class RulesetTest extends TestCase
         return $workingDirectory;
     }
 
-    private function runFixer(string $workingDirectory): void
+    private function runFixer(string $configName, string $path): void
     {
         $projectRoot = dirname(__DIR__, 2);
         (new Process([
             $projectRoot . '/vendor/bin/php-cs-fixer',
             'fix',
-            '--config=' . $projectRoot . '/config/php-cs-fixer.php',
+            '--config=' . $projectRoot . '/config/' . $configName,
             '--using-cache=no',
-            $workingDirectory,
+            $path,
         ]))->mustRun();
     }
 }

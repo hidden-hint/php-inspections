@@ -2,7 +2,8 @@
 
 Rows follow the inspection groups documented in
 [kalessil/phpinspectionsea `docs/`](https://github.com/kalessil/phpinspectionsea/tree/master/docs),
-one row per documented inspection, grouped by the document it appears in.
+one row per documented inspection, grouped by the document it appears in. "PHP CS Fixer" means the on-save
+`config/php-cs-fixer.php`; "PHP CS Fixer (refactor)" means the manually run `config/php-cs-fixer-refactor.php`.
 
 | EA inspection | Covered by | Rule/fixer id |
 |---|---|---|
@@ -44,7 +45,7 @@ one row per documented inspection, grouped by the document it appears in.
 | `strtr(...)` could be replaced with `str_replace(...)` | not planned | |
 | `substr(...)` could be replaced with `strpos(...)` | Rector set | `StrStartsWithRector` (PHP 8.0 set) |
 | Strings normalization | not planned | |
-| Redundant `else` keyword | PHP CS Fixer | `no_useless_else` |
+| Redundant `else` keyword | PHP CS Fixer (refactor) | `no_useless_else` |
 | Inverted `if-else` constructs | not planned | |
 | Unnecessary string case manipulation | not planned | |
 | `array_unique(...)` can be used | not planned | |
@@ -53,7 +54,7 @@ one row per documented inspection, grouped by the document it appears in.
 | `strlen(...)` misused | custom (Task 6) | `phpInspections.strlenEmptinessCheck` |
 | `ob_get_clean()` can be used | not planned | |
 | **Language level migration** | | |
-| Alias functions usage | PHP CS Fixer | `no_alias_functions` |
+| Alias functions usage | PHP CS Fixer (refactor) | `no_alias_functions` |
 | **Performance** | | |
 | Packed hashtable optimizations | not planned | |
 | Slow array function used in loop | custom (Task 7) | `phpInspections.arrayMergeInLoop` |
@@ -86,7 +87,7 @@ one row per documented inspection, grouped by the document it appears in.
 | **Types compatibility** | | |
 | `empty(...)` usage | strict-rules | `empty.notAllowed` |
 | Strict comparison | strict-rules | `equal.notAllowed`, `notEqual.notAllowed` |
-| Strict type search in arrays | PHP CS Fixer | `strict_param` |
+| Strict type search in arrays | PHP CS Fixer (refactor) | `strict_param` |
 | JSON encoding API usage | not planned | |
 | **Unused** | | |
 | Parameter/variable is not used | Rector set | `RemoveUnusedVariableAssignRector` (dead code) |
