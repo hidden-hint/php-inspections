@@ -77,6 +77,7 @@ $root = getcwd();
 return is_file($root . '/app/Mage.php')
     ? ['parameters' => [
         'paths' => [$root . '/app/code/YourVendor'],
+        'scanFiles' => [$root . '/app/Mage.php'],
         'scanDirectories' => [$root . '/app/code', $root . '/lib'],
         'ignoreErrors' => [['identifier' => 'ergebnis.noExtends']],
     ]]
@@ -91,6 +92,9 @@ return is_file($root . '/app/Mage.php')
 - `scanDirectories` lets PHPStan find classes outside `paths` without reporting on them. Prefer it over
   `bootstrapFiles` with the project's own autoloader: Magento 1's `app/Mage.php` registers an autoloader that
   declares classes PHPStan has already loaded and crashes the analysis.
+- `app/Mage.php` sits outside `app/code` and `lib`, so it needs its own `scanFiles` entry. If anything in `paths`
+  declares a stub `Mage` class (test bootstraps often do), exclude it: PHPStan would otherwise resolve `Mage` to the
+  stub and report `Mage::getModel()` and friends as undefined.
 - Magento 1 requires inheritance, so `ergebnis.noExtends` would fire on every class.
 - Code whose dependencies are not installed in `vendor/` cannot be analysed: leave it out of `paths`.
 
