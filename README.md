@@ -84,9 +84,13 @@ User `settings.json` (replace `/Users/you` with your home directory):
     "php-cs-fixer.executablePath": "/Users/you/.composer/vendor/bin/php-cs-fixer",
     "php-cs-fixer.config": "/Users/you/.composer/vendor/hidden-hint/php-inspections/config/php-cs-fixer.php",
     "php-cs-fixer.allowRisky": false,
+    "php-cs-fixer.exclude": ["**/*.phtml"],
     "php-cs-fixer.onsave": true
 }
 ```
+
+`php-cs-fixer.exclude` keeps the fixer away from templates: PHP CS Fixer indents PHP blocks without seeing the
+surrounding HTML, so it breaks the indentation of mixed HTML/PHP files.
 
 `php-cs-fixer.onsave` also fires on auto-save, so with `files.autoSave: afterDelay` the fixer runs after every pause in
 typing.
