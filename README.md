@@ -47,6 +47,7 @@ composer global require hidden-hint/php-inspections:@dev
 mkdir -p ~/.config/php-inspections
 sed "s#{composer-home}#$(composer global config home)#g" \
     ~/Work/hidden-hint/php-inspections/docs/global/phpstan.neon > ~/.config/php-inspections/phpstan.neon
+cp ~/Work/hidden-hint/php-inspections/docs/global/project.php ~/.config/php-inspections/project.php
 ```
 
 The global config includes strict-rules, ergebnis and this package's `extension.neon` by absolute path.
@@ -55,6 +56,42 @@ The global config includes strict-rules, ergebnis and this package's `extension.
 
 The analysed project needs its own `vendor/` (run `composer install` there) so PHPStan can discover its classes.
 PHPStan reads the project's `require.php` range, so PHP 8.3-only rules stay silent for projects that allow older PHP.
+
+### Per-project settings
+
+`project.php` is included by the global config and returns the parameters that depend on the analysed project.
+PHPStan runs from the project root (VS Code uses the workspace folder), so `getcwd()` identifies the project. By
+default it analyses the whole project except `vendor/`.
+
+To handle a kind of project differently, detect it by a file it always has and return its own parameters. For a
+Magento 1 shop whose own modules live in `app/code/YourVendor`:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+$root = getcwd();
+
+return is_file($root . '/app/Mage.php')
+    ? ['parameters' => [
+        'paths' => [$root . '/app/code/YourVendor'],
+        'scanDirectories' => [$root . '/app/code', $root . '/lib'],
+        'ignoreErrors' => [['identifier' => 'ergebnis.noExtends']],
+    ]]
+    : ['parameters' => [
+        'paths' => [$root],
+        'excludePaths' => ['analyseAndScan' => [$root . '/vendor (?)']],
+    ]];
+```
+
+- Keep `paths` out of `phpstan.neon`: PHPStan merges list parameters from included files, so a `paths` there would
+  be added to the project's instead of replaced.
+- `scanDirectories` lets PHPStan find classes outside `paths` without reporting on them. Prefer it over
+  `bootstrapFiles` with the project's own autoloader: Magento 1's `app/Mage.php` registers an autoloader that
+  declares classes PHPStan has already loaded and crashes the analysis.
+- Magento 1 requires inheritance, so `ergebnis.noExtends` would fire on every class.
+- Code whose dependencies are not installed in `vendor/` cannot be analysed: leave it out of `paths`.
 
 ## Fixing a project
 

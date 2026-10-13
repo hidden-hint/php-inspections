@@ -2,10 +2,7 @@ includes:
     - {composer-home}/vendor/phpstan/phpstan-strict-rules/rules.neon
     - {composer-home}/vendor/ergebnis/phpstan-rules/rules.neon
     - {composer-home}/vendor/hidden-hint/php-inspections/extension.neon
+    - project.php
 
 parameters:
     level: max
-    paths:
-        - %currentWorkingDirectory%
-    excludePaths:
-        - %currentWorkingDirectory%/vendor (?)
